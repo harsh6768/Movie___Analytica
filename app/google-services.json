@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "502203382118",
+    "firebase_url": "https://movieanalytica.firebaseio.com",
+    "project_id": "movieanalytica",
+    "storage_bucket": "movieanalytica.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:502203382118:android:4a4e95bed3c6ba43",
+        "android_client_info": {
+          "package_name": "com.technohack.movie_analytica"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "502203382118-dvjjok4rmjlhkjpfjbj0ffnhl6ofkkt5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.technohack.movie_analytica",
+            "certificate_hash": "62215a9cdb0d5d6f8a76c9e9e675486069c3a4e9"
+          }
+        },
+        {
+          "client_id": "502203382118-9jes3r1qf116l4r35qovn2gq3gn9pg3r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC96wgwSCw7dAV0Ir_mZEFdTxlFCquzS5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "502203382118-9jes3r1qf116l4r35qovn2gq3gn9pg3r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
