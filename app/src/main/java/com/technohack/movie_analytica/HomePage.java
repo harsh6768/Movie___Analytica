@@ -12,14 +12,23 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.technohack.movie_analytica.Adapters.PopularMovieAdapter;
+import com.technohack.movie_analytica.Models.HeaderModel;
 import com.technohack.movie_analytica.Models.PopularMoviePojo;
 import com.technohack.movie_analytica.retrofit.TmdbApi;
 
@@ -43,17 +52,26 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
     private FirebaseAuth mAuth;
     private ProgressDialog progressDialog;
 
+    private TextView headerUserName,headerEmail;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference dataRef;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
-        FirebaseApp.initializeApp(this);
-        mAuth=FirebaseAuth.getInstance();
-
         toolbar=findViewById(R.id.toolbarId);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Popular Movies");
+
+        FirebaseApp.initializeApp(this);
+        mAuth=FirebaseAuth.getInstance();
+        firebaseDatabase=FirebaseDatabase.getInstance();
+        dataRef=firebaseDatabase.getReference();
+
+        headerUserName=findViewById(R.id.header_user_nameId);
+        headerEmail=findViewById(R.id.header_email_Id);
 
         //for drawer layout
         DrawerLayout drawerLayout=findViewById(R.id.drawer_layout);
@@ -74,6 +92,37 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
 
         //to fetch the data
         fetchMovieData();
+
+    }
+
+    //to fetch the  users data
+    private void fetchUserData() {
+
+        String uId=mAuth.getUid();
+
+        assert uId != null;
+        dataRef.child("Users").child(uId).addValueEventListener(new ValueEventListener() {
+           @Override
+           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+               if(dataSnapshot.exists()){
+
+                 HeaderModel headerModel=dataSnapshot.getValue(HeaderModel.class);
+                   assert headerModel != null;
+                   String userName=headerModel.getUserName();
+                   String userEmail=headerModel.getUserEmail();
+
+                   headerUserName.setText(userName);
+                   headerEmail.setText(userEmail);
+
+               }
+           }
+
+           @Override
+           public void onCancelled(@NonNull DatabaseError databaseError) {
+
+           }
+       });
 
     }
 
@@ -126,6 +175,8 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
 
                     }
                     popularMovieAdapter.notifyDataSetChanged();
+
+
                 }
 
 
@@ -173,6 +224,20 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
           switch (item.getItemId()){
               case R.id.home_watch_movieId:
                   startActivity(new Intent(HomePage.this,WatchedMovies.class));
+                  return true;
+              case R.id.home_search_movieId:
+                  startActivity(new Intent(HomePage.this,SearchMoviePage.class));
+                  return true;
+              case R.id.home_nav_feed_backId:
+                  startActivity(new Intent(HomePage.this,FeedbackPage.class));
+                  return true;
+              case R.id.home_nav_contact_usId:
+                  Intent dialerIntent=new Intent(Intent.ACTION_DIAL, Uri.parse("tel:8305860608"));
+                  try {
+                      startActivity(dialerIntent);
+                  }catch (SecurityException s) {
+                      Toast.makeText(this, s.getMessage(), Toast.LENGTH_LONG).show();
+                  }
                   return true;
               case R.id.home_nav_logoutId:
                   mAuth.signOut();

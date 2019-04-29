@@ -8,6 +8,10 @@
             android:id="@+id/home_watch_movieId"
             android:icon="@drawable/ic_personal_video_black_24dp"
             android:title="Watched Movie" />
+        <item
+            android:id="@+id/home_search_movieId"
+            android:icon="@drawable/ic_search_black_24dp"
+            android:title="Search Movie" />
     </group>
 
     <item android:title="Communicate">

@@ -28,6 +28,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.technohack.movie_analytica.Models.HeaderModel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -136,14 +137,7 @@ public class Register extends AppCompatActivity {
 
                 if(task.isSuccessful()){
 
-                    //addUserIntoDatabase(mUsername,mEmail,mPass);
-                    progressDialog.dismiss();
-
-                    // Toast.makeText(Register.this, "Failed to register", Toast.LENGTH_SHORT).show();
-                    Intent regSuccessIntent=new Intent(Register.this,HomePage.class);
-                    //regSuccessIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(regSuccessIntent);
-                    finish();
+                    addUserIntoDatabase(mUsername,mEmail,mPass);
 
                 }else{
                     progressDialog.dismiss();
@@ -160,18 +154,19 @@ public class Register extends AppCompatActivity {
            @Override
            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-               if(!(dataSnapshot.child("Users").child(mUsername).exists())){
+               String uId=mAuth.getUid();
+               assert uId != null;
+               if(!(dataSnapshot.child("Users").child(uId).exists())){
 
-                   Map<String ,Object> user=new HashMap<>();
-                   user.put("user_name",mUsername);
-                   user.put("user_email",mEmail);
-                   user.put("user_pass",mPass);
+                   HeaderModel headerModel=new HeaderModel(mUsername,mEmail,mPass);
 
-                   databaseReference.child("Users").child(mUsername).setValue(user)
+
+                   databaseReference.child("Users").child(uId).setValue(headerModel)
                            .addOnCompleteListener(new OnCompleteListener<Void>() {
                                @Override
                                public void onComplete(@NonNull Task<Void> task) {
                                       if(task.isSuccessful()){
+
                                           progressDialog.dismiss();
 
                                           // Toast.makeText(Register.this, "Failed to register", Toast.LENGTH_SHORT).show();

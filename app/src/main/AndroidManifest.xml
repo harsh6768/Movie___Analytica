@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".WatchedMovies"></activity>
+        <activity android:name=".FeedbackPage"></activity>
+        <activity android:name=".WatchedMovies" />
         <activity android:name=".SearchMoviePage" />
         <activity
             android:name=".PopularMoviesDetails"

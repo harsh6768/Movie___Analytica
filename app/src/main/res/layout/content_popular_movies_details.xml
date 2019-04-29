@@ -8,7 +8,7 @@
     tools:context=".PopularMoviesDetails"
     tools:showIn="@layout/activity_popular_movies_details">
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -51,7 +51,7 @@
             style="?android:attr/ratingBarStyleSmall"/>
 
 
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 
 </androidx.core.widget.NestedScrollView>

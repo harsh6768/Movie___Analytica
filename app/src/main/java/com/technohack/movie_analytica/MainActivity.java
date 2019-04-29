@@ -11,10 +11,16 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class MainActivity extends AppCompatActivity {
 
     private ImageView welcomeImg;
     private TextView welcomeText;
+
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        FirebaseApp.initializeApp(this);
+        mAuth=FirebaseAuth.getInstance();
 
         welcomeImg=findViewById(R.id.splash_img);
         welcomeText=findViewById(R.id.splash_text);
