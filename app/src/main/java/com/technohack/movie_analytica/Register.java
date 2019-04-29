@@ -2,6 +2,7 @@ package com.technohack.movie_analytica;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.multidex.MultiDex;
 
 import android.app.ProgressDialog;
@@ -21,7 +22,15 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Register extends AppCompatActivity {
@@ -31,6 +40,10 @@ public class Register extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     private FirebaseAuth mAuth;
+    private FirebaseFirestore firebaseFirestore;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
+    private Toolbar toolbar;
 
     @Override
     protected void onStart() {
@@ -55,6 +68,13 @@ public class Register extends AppCompatActivity {
 
         FirebaseApp.initializeApp(this);
         mAuth=FirebaseAuth.getInstance();
+        firebaseFirestore=FirebaseFirestore.getInstance();
+        firebaseDatabase=FirebaseDatabase.getInstance();
+        databaseReference=firebaseDatabase.getReference();
+
+        toolbar=findViewById(R.id.common_toolbarId);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Sign-up User");
 
         regUsername=findViewById(R.id.register_usernameId);
         regEmail=findViewById(R.id.register_emailId);
@@ -101,7 +121,7 @@ public class Register extends AppCompatActivity {
 
     }
 
-    private void regNewUser(String mUsername, String mEmail, String mPass, String mConfirm) {
+    private void regNewUser(final String mUsername, final String mEmail, final String mPass, String mConfirm) {
 
         //for progressbarDialog
         progressDialog= new ProgressDialog(Register.this, R.style.AppTheme_Dark_Dialog);
@@ -116,12 +136,15 @@ public class Register extends AppCompatActivity {
 
                 if(task.isSuccessful()){
 
+                    //addUserIntoDatabase(mUsername,mEmail,mPass);
                     progressDialog.dismiss();
-                   // Toast.makeText(Register.this, "Failed to register", Toast.LENGTH_SHORT).show();
+
+                    // Toast.makeText(Register.this, "Failed to register", Toast.LENGTH_SHORT).show();
                     Intent regSuccessIntent=new Intent(Register.this,HomePage.class);
                     //regSuccessIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(regSuccessIntent);
                     finish();
+
                 }else{
                     progressDialog.dismiss();
                     Toast.makeText(Register.this, "Failed to register", Toast.LENGTH_SHORT).show();
@@ -129,5 +152,49 @@ public class Register extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void addUserIntoDatabase(final String mUsername, final String mEmail, final String mPass) {
+
+       databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+           @Override
+           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+               if(!(dataSnapshot.child("Users").child(mUsername).exists())){
+
+                   Map<String ,Object> user=new HashMap<>();
+                   user.put("user_name",mUsername);
+                   user.put("user_email",mEmail);
+                   user.put("user_pass",mPass);
+
+                   databaseReference.child("Users").child(mUsername).setValue(user)
+                           .addOnCompleteListener(new OnCompleteListener<Void>() {
+                               @Override
+                               public void onComplete(@NonNull Task<Void> task) {
+                                      if(task.isSuccessful()){
+                                          progressDialog.dismiss();
+
+                                          // Toast.makeText(Register.this, "Failed to register", Toast.LENGTH_SHORT).show();
+                                          Intent regSuccessIntent=new Intent(Register.this,HomePage.class);
+                                          //regSuccessIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                          startActivity(regSuccessIntent);
+                                          finish();
+                                      }else{
+                                          progressDialog.dismiss();
+                                          Toast.makeText(Register.this, "Failed to register", Toast.LENGTH_SHORT).show();
+                                      }
+                               }
+                           });
+               }else{
+                   progressDialog.dismiss();
+                   Toast.makeText(Register.this, "Failed to register", Toast.LENGTH_SHORT).show();
+               }
+           }
+
+           @Override
+           public void onCancelled(@NonNull DatabaseError databaseError) {
+
+           }
+       });
     }
 }

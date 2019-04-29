@@ -1,55 +1,160 @@
 package com.technohack.movie_analytica;
 
-import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import android.view.View;
-
-import com.google.android.material.navigation.NavigationView;
-
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.multidex.MultiDex;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class HomePage extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.technohack.movie_analytica.Adapters.PopularMovieAdapter;
+import com.technohack.movie_analytica.Models.PopularMoviePojo;
+import com.technohack.movie_analytica.retrofit.TmdbApi;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class HomePage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private RecyclerView recyclerView;
+    private PopularMovieAdapter popularMovieAdapter;
+    private Retrofit retrofit;
+    private List<PopularMoviePojo> popularMoviePojoList;
+    private Toolbar toolbar;
+    private FirebaseAuth mAuth;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
-        Toolbar toolbar =  findViewById(R.id.toolbar);
+        FirebaseApp.initializeApp(this);
+        mAuth=FirebaseAuth.getInstance();
+
+        toolbar=findViewById(R.id.toolbarId);
         setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Popular Movies");
 
-        MultiDex.install(this);
+        //for drawer layout
+        DrawerLayout drawerLayout=findViewById(R.id.drawer_layout);
+        NavigationView navigationView=findViewById(R.id.home_navigationId);
+        ActionBarDrawerToggle actionBarDrawerToggle=new ActionBarDrawerToggle(this,drawerLayout,toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
+        //end of the code of drawer layOut
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        popularMoviePojoList=new ArrayList<>();
+        recyclerView=findViewById(R.id.home_recyclerViewId);
+        popularMovieAdapter=new PopularMovieAdapter(this,popularMoviePojoList);
+        //recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+       // recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,LinearLayoutManager.HORIZONTAL));
+        recyclerView.setAdapter(popularMovieAdapter);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        //to fetch the data
+        fetchMovieData();
+
+    }
+
+    /**
+     * To Fetch the Popular Movies
+     */
+
+    private void fetchMovieData() {
+
+        //for progressbarDialog
+        progressDialog= new ProgressDialog(HomePage.this, R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Fetching Popular Movies ...");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
+        retrofit=new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        TmdbApi tmdbApi=retrofit.create(TmdbApi.class);
+
+        Call<PopularMovieResponse> popularMovieResponseCall=tmdbApi.getPopularMovie(Constants.API_KEY);
+
+        popularMovieResponseCall.enqueue(new Callback<PopularMovieResponse>() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onResponse(Call<PopularMovieResponse> call, Response<PopularMovieResponse> response) {
+
+                if(response.body()!=null){
+
+                    progressDialog.dismiss();
+
+                    PopularMovieResponse popularMovieResponse=response.body();
+
+                    List<PopularMovieResponse.ResultsBean>  resultsBeanList=popularMovieResponse.getResults();
+
+                    for(PopularMovieResponse.ResultsBean resultsBean:resultsBeanList){
+
+                        String movieTitle=resultsBean.getTitle();
+                        String movieOverview=resultsBean.getOverview();
+                        String moviePoster=resultsBean.getPoster_path();
+                        String movieReleaseDate=resultsBean.getRelease_date();
+                        double movieRating=resultsBean.getVote_average();
+                        int id=resultsBean.getId();
+
+                        PopularMoviePojo popularMoviePojo=new PopularMoviePojo(movieTitle,movieOverview,moviePoster,movieReleaseDate,movieRating,id);
+
+                        popularMoviePojoList.add(popularMoviePojo);
+
+                    }
+                    popularMovieAdapter.notifyDataSetChanged();
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Call<PopularMovieResponse> call, Throwable t) {
+
             }
         });
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+    }
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_page,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+
+            case R.id.search_navId:
+                startActivity(new Intent(HomePage.this,SearchMoviePage.class));
+                return true;
+                default:
+                    return false;
+        }
     }
 
     @Override
@@ -63,47 +168,18 @@ public class HomePage extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home_page, menu);
-        return true;
-    }
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+          switch (item.getItemId()){
+              case R.id.home_watch_movieId:
+                  startActivity(new Intent(HomePage.this,WatchedMovies.class));
+                  return true;
+              case R.id.home_nav_logoutId:
+                  mAuth.signOut();
+                  startActivity(new Intent(HomePage.this,SignIn.class));
+                  finish();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
+          }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

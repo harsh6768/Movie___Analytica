@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.technohack.movie_analytica">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -11,10 +11,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".WatchedMovies"></activity>
+        <activity android:name=".SearchMoviePage" />
         <activity
-            android:name=".HomePage"
-            android:label="@string/title_activity_home_page"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:name=".PopularMoviesDetails"
+            android:label="@string/title_activity_popular_movies_details"
+            android:parentActivityName=".HomePage"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".HomePage" />
         <activity android:name=".SignIn" />
         <activity android:name=".Register" />
         <activity android:name=".MainActivity">

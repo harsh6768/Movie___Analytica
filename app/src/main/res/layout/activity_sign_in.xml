@@ -4,8 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SignIn">
+    tools:context=".SignIn"
+    android:id="@+id/signIn_layoutId">
 
+
+    <include
+        layout="@layout/common_app_bar"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="36dp" />
 
     <com.google.android.material.textfield.TextInputLayout
 
@@ -38,7 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="92dp"
+        android:layout_marginTop="116dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="@+id/textInputLayout2"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter email-id"
-            android:inputType="textEmailAddress"/>
+            android:inputType="textEmailAddress" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -65,7 +71,7 @@
         android:text="Sign-In"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/textInputLayout"
         app:layout_constraintHorizontal_bias="0.476"
         app:layout_constraintStart_toStartOf="@+id/textInputLayout"
@@ -73,17 +79,17 @@
 
     <Button
         android:id="@+id/login_regId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="156dp"
+        android:layout_width="303dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="104dp"
+        android:background="@android:color/white"
+        android:padding="4dp"
         android:text="Do You need an Account?"
         android:textColor="@color/colorAccent"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:padding="4dp"
-        android:background="@android:color/white"
         app:layout_constraintEnd_toEndOf="@+id/login_signInId"
-        app:layout_constraintHorizontal_bias="0.302"
+        app:layout_constraintHorizontal_bias="0.387"
         app:layout_constraintStart_toStartOf="@+id/login_signInId"
         app:layout_constraintTop_toBottomOf="@+id/login_signInId" />
 

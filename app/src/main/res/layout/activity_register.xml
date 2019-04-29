@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".Register">
 
+    <include layout="@layout/common_app_bar"/>
+
     <com.google.android.material.textfield.TextInputLayout
 
         android:id="@+id/textInputLayout"
@@ -82,7 +84,7 @@
         android:layout_width="match_parent"
         android:layout_height="54dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="72dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -94,7 +96,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter username"
-            android:inputType="textPersonName"/>
+            android:inputType="textPersonName" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -103,7 +105,7 @@
         android:layout_width="219dp"
         android:layout_height="49dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="24dp"
         android:background="@color/colorAccent"
         android:text="Sign-Up"
         android:textAllCaps="false"
@@ -116,19 +118,19 @@
 
     <Button
         android:id="@+id/reg_login_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="348dp"
+        android:layout_height="50dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="56dp"
         android:layout_marginEnd="8dp"
         android:background="@android:color/white"
         android:padding="4dp"
-        android:text="Do You already have an account?"
+        android:text=" already have an account?"
         android:textColor="@color/colorAccent"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/reg_signUpId"
-        app:layout_constraintHorizontal_bias="0.507"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="@+id/reg_signUpId"
         app:layout_constraintTop_toBottomOf="@+id/reg_signUpId" />
 

@@ -2,6 +2,7 @@ package com.technohack.movie_analytica;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.multidex.MultiDex;
 
 import android.app.ProgressDialog;
@@ -32,6 +33,7 @@ public class SignIn extends AppCompatActivity {
      private ProgressDialog progressDialog;
      private FirebaseAuth mAuth;
 
+    private Toolbar toolbar;
     @Override
     protected void onStart() {
         super.onStart();
@@ -56,6 +58,10 @@ public class SignIn extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
 
         mAuth=FirebaseAuth.getInstance();
+
+        toolbar=findViewById(R.id.common_toolbarId);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Sign-In User");
 
         loginEmail=findViewById(R.id.login_emailId);
         loginPass=findViewById(R.id.login_passId);
