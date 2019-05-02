@@ -203,6 +203,9 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
             case R.id.search_navId:
                 startActivity(new Intent(HomePage.this,SearchMoviePage.class));
                 return true;
+            case R.id.action_profileId:
+                startActivity(new Intent(HomePage.this,ViewProfilePage.class));
+                return true;
                 default:
                     return false;
         }

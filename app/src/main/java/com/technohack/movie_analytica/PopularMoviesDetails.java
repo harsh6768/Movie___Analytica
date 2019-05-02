@@ -94,18 +94,21 @@ public class PopularMoviesDetails extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab);
 
         //Setting the values
-        Glide.with(this).load("https://image.tmdb.org/t/p/w500/"+poster).into(moviePoster);
-        movieDesc.setText(desc);
-        movieReleaseDate.setText(String.format("%s%s\n%s%s", RELEASE_DATE, release_date, RATINGS,rating));
-        movieRating.setRating((float) rating);
+          Glide.with(this).load("https://image.tmdb.org/t/p/w500/"+poster).into(moviePoster);
+          movieDesc.setText(desc);
+          movieReleaseDate.setText(String.format("%s%s\n%s%s", RELEASE_DATE, release_date, RATINGS,rating));
+          movieRating.setRating((float) rating);
 
         //to add the movie
+        //onPopularMovieDetails();
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 addMovieIntoWatchList(view);
             }
         });
+
     }
 
     private void addMovieIntoWatchList(final View view) {
@@ -168,7 +171,8 @@ public class PopularMoviesDetails extends AppCompatActivity {
                 float runTime=moviesDetailsResponse.getRuntime();
              //  float time= (float) (runTime/60.0);
              //  movieLength.setText(String.format("%s%s", String.valueOf(runTime), HOURS));
-
+                //title=moviesDetailsResponse.getOriginal_title();
+                //poster=moviesDetailsResponse.getPoster_path();
                 PopularMoviesDetailsResponse.VideosBean videosBean=moviesDetailsResponse.getVideos();
 
                 assert videosBean != null;

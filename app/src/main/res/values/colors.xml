@@ -7,7 +7,7 @@
 
     <color name="button">#CBF1C69A</color>
     <color name="splash">#FF00FA79</color>
-
+    <color name="feedback_color">#29FF03</color>
     <color name="overlayBackground">#7f333639</color>
     <color name="overlayActionBar">#0e0d0e</color>
     <color name="navigationText">#22b5d2</color>
